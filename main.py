@@ -1,6 +1,7 @@
 import requests
 from bs4 import BeautifulSoup
 from tqdm import tqdm
+import pandas as pd
 
 def get_list_apps(url):
     headers = {
@@ -13,7 +14,6 @@ def get_list_apps(url):
         "Upgrade-Insecure-Requests": "1",
         "Cache-Control": "max-age=0",
         "x-client-data": "CI+2yQEIorbJAQipncoBCIL0ygEIlKHLAQjb78sBCJ75ywEI5oTMAQiamswBCKmpzAEI/KrMAQjCrMwBCKWvzAEYq6nKAQ=="        
-
     }
 
     r = requests.get(url, headers=headers)
@@ -64,11 +64,9 @@ def get_app_details(url):
         app_details["app_category"] = temp[1]
 
         more_info = app.find_all("div", class_="JHTxhe IQ1z0d")
-
         for info in more_info:
             header = info.find_all("div", class_="BgcNfc")
-            val = info.find_all("span", class_="IQ1z0d")
-
+            val = info.find_all("div", class_="IQ1z0d")
             for i, j in zip(header, val):
                 app_details[i.text] = j.text
     return app_details
@@ -98,7 +96,6 @@ if __name__ == "__main__":
     print("[+] Start scraping...")
     print("[+] Getting link apps from category games...")
     for url in tqdm(urls_category):
-        category_name = url[49:]
         for link_app in get_list_apps(url):
             if link_app not in unique_app:
                 unique_app.append(link_app)
@@ -111,4 +108,11 @@ if __name__ == "__main__":
         details = get_app_details(link_app)
         if details != {}:
             data.append(details)
+
     print("[+] Scraping finished!")
+    
+    print("[+] Writing data to csv...")
+    df = pd.DataFrame(data)
+    df.to_csv("data.csv", index=False)
+    print("[+] Writing finished!")
+    print("[+] Done!")
