@@ -1,9 +1,8 @@
 import requests
 from bs4 import BeautifulSoup
+from tqdm import tqdm
 
 def get_list_apps(url):
-    print("scrapping...")
-
     headers = {
         "User-Agent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/51.0.2704.103 Safari/537.36",
         "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8",
@@ -30,6 +29,7 @@ def get_list_apps(url):
             # print(link)
     # get link apps
     apps_link = []
+
     for link in seemore_link:
         r = requests.get(link)
         soup = BeautifulSoup(r.text, "html.parser")
@@ -95,20 +95,20 @@ if __name__ == "__main__":
     ]
 
     unique_app = []
-    for url in urls_category:
-        print(url)
-        i = 0
+    print("[+] Start scraping...")
+    print("[+] Getting link apps from category games...")
+    for url in tqdm(urls_category):
+        category_name = url[49:]
         for link_app in get_list_apps(url):
             if link_app not in unique_app:
                 unique_app.append(link_app)
-                i+=1
-        print(i)
         
     
     data = []
-    for link_app in unique_app:
+
+    print("[+] Start scraping app details...")
+    for link_app in tqdm(unique_app):
         details = get_app_details(link_app)
         if details != {}:
             data.append(details)
-
-    print(data, len(data))
+    print("[+] Scraping finished!")
