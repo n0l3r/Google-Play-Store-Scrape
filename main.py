@@ -74,12 +74,36 @@ def get_app_details(url):
     return app_details
 
 if __name__ == "__main__":
-    url = "https://play.google.com/store/apps/category/GAME"
+    urls_category = [
+        "https://play.google.com/store/apps/category/GAME_ACTION",
+        "https://play.google.com/store/apps/category/GAME_ADVENTURE",
+        "https://play.google.com/store/apps/category/GAME_ARCADE",
+        "https://play.google.com/store/apps/category/GAME_BOARD",
+        "https://play.google.com/store/apps/category/GAME_CARD",
+        "https://play.google.com/store/apps/category/GAME_CASINO",
+        "https://play.google.com/store/apps/category/GAME_CASUAL",
+        "https://play.google.com/store/apps/category/GAME_EDUCATIONAL",
+        "https://play.google.com/store/apps/category/GAME_MUSIC",
+        "https://play.google.com/store/apps/category/GAME_PUZZLE",
+        "https://play.google.com/store/apps/category/GAME_RACING",
+        "https://play.google.com/store/apps/category/GAME_ROLE_PLAYING",
+        "https://play.google.com/store/apps/category/GAME_SIMULATION",
+        "https://play.google.com/store/apps/category/GAME_SPORTS",
+        "https://play.google.com/store/apps/category/GAME_STRATEGY",
+        "https://play.google.com/store/apps/category/GAME_TRIVIA",
+        "https://play.google.com/store/apps/category/GAME_WORD",
+    ]
 
     unique_app = []
-    for link_app in get_list_apps(url):
-        if link_app not in unique_app:
-            unique_app.append(link_app)
+    for url in urls_category:
+        print(url)
+        i = 0
+        for link_app in get_list_apps(url):
+            if link_app not in unique_app:
+                unique_app.append(link_app)
+                i+=1
+        print(i)
+        
     
     data = []
     for link_app in unique_app:
