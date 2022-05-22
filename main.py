@@ -26,7 +26,7 @@ def get_list_apps(url):
         for a in see.find_all("a"):
             link = "https://play.google.com" + a.get("href")
             seemore_link.append(link)
-            # print(link)
+
     # get link apps
     apps_link = []
 
@@ -51,24 +51,36 @@ def get_app_details(url):
     
     for app in card:
         # get app name
-        app_details["app_name"] = app.find("h1", class_="AHFaub").text
+        app_details["Name"] = app.find("h1", class_="AHFaub").text
         
         temp = []
         for val in app.find_all("span", class_="T32cc UAO9ie"):
             temp.append(val.text)
             
         # get app company
-        app_details["app_company"] = temp[0]
+        app_details["Company"] = temp[0]
 
         # get app category
-        app_details["app_category"] = temp[1]
+        app_details["Category"] = temp[1]
 
         more_info = app.find_all("div", class_="JHTxhe IQ1z0d")
         for info in more_info:
             header = info.find_all("div", class_="BgcNfc")
             val = info.find_all("div", class_="IQ1z0d")
             for i, j in zip(header, val):
-                app_details[i.text] = j.text
+                if i.text == "Size":
+                    if "G" in j.text:
+                        size = j.text.replace("G", "")
+                        app_details[i.text] = float(size)*1000
+                    elif "M" in j.text:
+                        size = j.text.replace("M", "")
+                        if "," in size:
+                            size = size.replace(",", ".")
+                        app_details[i.text] = float(size)
+                    else:
+                        app_details[i.text] = j.text
+                else:
+                    app_details[i.text] = j.text
     return app_details
 
 if __name__ == "__main__":
@@ -99,16 +111,13 @@ if __name__ == "__main__":
         for link_app in get_list_apps(url):
             if link_app not in unique_app:
                 unique_app.append(link_app)
-        
-    
-    data = []
 
+    data = []
     print("[+] Start scraping app details...")
     for link_app in tqdm(unique_app):
         details = get_app_details(link_app)
         if details != {}:
             data.append(details)
-
     print("[+] Scraping finished!")
     
     print("[+] Writing data to csv...")
